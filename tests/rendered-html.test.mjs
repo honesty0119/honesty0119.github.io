@@ -40,7 +40,7 @@ test('public pages and every published article have independent static HTML', as
 });
 test('local homepage assets and social preview exist', async () => {
   const page = await html();
-  const assets = [...page.matchAll(/(?:src|href)="(\/(?:assets\/[^"?#]+|favicon\.svg|og\.png))[^" ]*"/g)].map(m => m[1]);
+  const assets = [...page.matchAll(/(?:src|href)="(\/(?:assets\/[^"?#]+|images\/[^"?#]+|favicon\.svg|og\.png))[^" ]*"/g)].map(m => m[1]);
   assert.ok(assets.length > 0);
   for (const asset of new Set(assets)) await access(new URL(asset.slice(1), output));
   await access(new URL('og.png', output));
