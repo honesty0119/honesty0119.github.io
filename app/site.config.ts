@@ -13,8 +13,8 @@ export const site = {
     { id: "vehicle-uav", number: "02", category: "OPTIMIZATION RESEARCH", title: "车机协同巡检与能源调度", subtitle: "把路径、任务与补能，放进同一个模型。", description: "研究单车搭载双无人机的协同巡检，使用 MILP 与能源感知启发式算法，联合考虑任务分配、同步时序和有限充电资源。", tags: ["MILP", "组合优化", "能源调度", "启发式算法"], period: "2026.04 — 2026.09", href: "/post/vehicle-uav-coordination/", github: "", visual: "route" },
   ],
   experience: [
-    { company: "厦门圈巨网络科技有限公司", role: "AI Coding / FDE 实习生", period: "2026.06 — 2026.08", domain: "DTP 业务本体与数据平台", points: ["参与销售与运营系统重构，梳理线索、客户跟进、商机、订单和支付的业务规则。", "参与飞书销售智能助手落地，支持自然语言业务查询与多轮澄清，并构建典型问题评测集。", "将领域规则与研发规范封装为 Agent Skills，支持代码互审与研发决策治理。"], tags: ["Text2SQL", "Agent Skills", "业务系统集成"] },
-    { company: "深圳进门财经科技股份有限公司", role: "数据分析实习生", period: "2024.04 — 2024.06", domain: "金融智能问答系统", points: ["参与金融知识库建设，处理监管文件、研报与产品说明书，设计混合检索及重排序流程。", "基于 Schema 注入、Few-shot Prompt、SQL 校验和执行反馈构建 Text2SQL 链路。", "设计意图识别与查询路由，在 RAG、结构化查询与缓存之间选择处理路径。"], tags: ["RAG", "BM25 / BGE", "查询路由"] },
+    { slug: "quanju-dtp", company: "厦门圈巨网络科技有限公司", role: "AI Coding / FDE 实习生", period: "2026.06 — 2026.08", domain: "DTP 业务本体与数据平台", points: ["参与销售与运营系统重构，梳理线索、客户跟进、商机、订单和支付的业务规则。", "优化六页经营看板，完善订单镜像、跨对象审计与双渠道支付测试链路。", "将领域规则与研发规范封装为 Agent Skills，支持代码互审与研发决策治理。"], tags: ["经营看板", "Agent Skills", "业务系统集成"] },
+    { slug: "jinmen-finance", company: "深圳进门财经科技股份有限公司", role: "数据分析实习生", period: "2024.04 — 2024.06", domain: "金融智能问答系统", points: ["参与金融知识库建设，处理监管文件、研报与产品说明书，设计混合检索及重排序流程。", "基于 Schema 注入、Few-shot Prompt、SQL 校验和执行反馈构建 Text2SQL 链路。", "设计意图识别与查询路由，在 RAG、结构化查询与缓存之间选择处理路径。"], tags: ["RAG", "BM25 / BGE", "查询路由"] },
   ],
   skills: [
     { title: "大模型应用", items: "RAG · Text2SQL · Function Calling · Agent 工具路由" },

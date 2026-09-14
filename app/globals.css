@@ -171,7 +171,21 @@ a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid 
 .experience-intro > p:not(.eyebrow) { font-size: 15px; line-height: 2; color: var(--muted); max-width: 300px; margin-top: 23px; }
 .experience-intro .text-link { display: inline-block; margin-top: 27px; }
 .timeline { border-left: 1px solid var(--line); margin-left: 8px; padding-left: 30px; }
-.experience-item { position: relative; padding: 28px 30px; background: var(--bg); border: 1px solid rgb(128 128 150 / 3%); border-radius: 23px; margin-bottom: 18px; }
+.experience-item { display: block; position: relative; padding: 28px 30px; background: var(--bg); border: 1px solid rgb(128 128 150 / 3%); border-radius: 23px; margin-bottom: 18px; }
+.experience-item:hover { color: var(--text); border-color: var(--accent); box-shadow: var(--shadow); }
+.experience-link { display: flex; align-items: center; justify-content: space-between; padding-top: 19px; margin-top: 22px; border-top: 1px solid var(--line); color: var(--accent); font-size: 12px; }
+.experience-link svg { width: 15px; height: 15px; }
+.experience-detail-layout { display: grid; grid-template-columns: minmax(0, 1fr) 255px; align-items: start; gap: 30px; }
+.experience-detail-body { min-width: 0; padding: 40px; background: var(--surface); border-radius: 26px; box-shadow: var(--shadow); }
+.experience-detail-summary { padding-bottom: 30px; margin-bottom: 34px; border-bottom: 1px solid var(--line); }
+.experience-detail-summary h2 { font-size: 25px; line-height: 1.5; margin-top: 14px; }
+.experience-detail-summary > p:last-of-type { color: var(--muted); font-size: 14px; margin-top: 9px; }
+.star-content h2 { padding-top: 27px; border-top: 1px solid var(--line); color: var(--accent); }
+.star-content h2:first-child { padding-top: 0; margin-top: 0; border-top: 0; }
+.star-content li { margin-block: 18px; }
+.experience-detail-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px; padding-top: 28px; margin-top: 36px; border-top: 1px solid var(--line); }
+.experience-outline-description { font-size: 12px; line-height: 1.9; color: var(--muted); margin-bottom: 23px; }
+.experience-about { display: block; margin-top: 24px; padding-top: 19px; border-top: 1px solid var(--line); color: var(--accent); font-size: 12px; }
 .experience-item:last-child { margin-bottom: 0; }
 .timeline-dot { position: absolute; left: -36px; top: 38px; width: 9px; height: 9px; border-radius: 50%; background: var(--deep); box-shadow: 0 0 0 5px var(--surface); }
 .experience-period { color: var(--accent); font: 10px var(--mono); letter-spacing: .4px; }
@@ -379,6 +393,12 @@ html[data-theme="dark"] .contact-section { border: 1px solid #344861; }
 
 /* Phone: fluid cards, readable text, no hidden content or tiny controls. */
 @media (max-width: 760px) {
+  .experience-detail-layout { grid-template-columns: 1fr; gap: 22px; }
+  .experience-detail-body { padding: 25px 22px; border-radius: 22px; }
+  .experience-detail-summary h2 { font-size: 22px; }
+  .experience-detail-layout .experience-outline { position: static; grid-row: 1; padding: 22px; }
+  .experience-outline nav { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .experience-outline-description, .experience-outline .experience-about { display: none; }
   .section-wrap, .nav-wrap, .site-footer, .page-container { width: calc(100% - 40px); }
   .nav-wrap { height: 62px; gap: 12px; }
   .brand { font-size: 13px; gap: 9px; }

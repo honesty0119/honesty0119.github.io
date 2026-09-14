@@ -48,3 +48,22 @@ test('local homepage assets and social preview exist', async () => {
   for (const post of await publishedPosts()) assert.ok(sitemap.includes(`/post/${post.slug}/`));
   assert.doesNotMatch(sitemap, /lizhengda0525/);
 });
+
+test('experience cards lead to complete static STAR pages with working anchors', async () => {
+  const homepage = await html();
+  const sitemap = await readFile(new URL('sitemap.xml', output), 'utf8');
+  for (const slug of ['quanju-dtp', 'jinmen-finance']) {
+    const route = `/experience/${slug}/`;
+    assert.ok(homepage.includes(`href="${route}"`));
+    assert.ok(sitemap.includes(route));
+    const page = await html(route.slice(1));
+    assert.ok(page.includes(`https://honesty0119.github.io${route}`));
+    for (const section of ['S｜业务背景', 'T｜承担任务', 'A｜关键行动', 'R｜交付成果']) assert.ok(page.includes(section), `${slug}: ${section}`);
+    for (const [, id] of page.matchAll(/href="#([^"]+)"/g)) assert.ok(page.includes(`id="${id}"`), id);
+    assert.ok(page.includes('href="/#experience"'));
+  }
+  const dtp = await html('experience/quanju-dtp/');
+  assert.ok(dtp.includes('26 项专项测试通过'));
+  assert.ok(dtp.includes('交付范围为代码与测试能力'));
+  assert.doesNotMatch(dtp, /TimothCurious|SQL生成准确率达到90%/);
+});

@@ -1,11 +1,11 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { aboutPage, posts, type BlogPost } from "./content.generated";
+import { aboutPage, posts, experiences, type ExperienceDetail, type BlogPost } from "./content.generated";
 import { site } from "./site.config";
 
-type View = "home" | "archives" | "categories" | "tags" | "about" | "post";
-const labels = { home: "首页", archives: "项目与笔记", categories: "分类", tags: "标签", about: "关于我", post: "项目记录" };
+type View = "home" | "archives" | "categories" | "tags" | "about" | "post" | "experience";
+const labels = { home: "首页", archives: "项目与笔记", categories: "分类", tags: "标签", about: "关于我", post: "项目记录", experience: "实习详情" };
 const nav = [["项目", "/#projects"], ["经历", "/#experience"], ["笔记", "/archives/"], ["关于", "/about/"]];
 function subscribeLocation(callback: () => void) { window.addEventListener("popstate", callback); return () => window.removeEventListener("popstate", callback); }
 function getQuery() { return window.location.search; }
@@ -25,6 +25,7 @@ export function BlogShell({ view = "home", slug }: { view?: View; slug?: string 
   const searchPanel = useRef<HTMLDivElement>(null);
   const locationQuery = useSyncExternalStore(subscribeLocation, getQuery, serverQuery);
   const filter = new URLSearchParams(locationQuery).get("name") || "";
+  const currentExperience = experiences.find(item => item.slug === slug);
   const current = posts.find((post) => post.slug === slug);
   const results = posts.filter((post) => post.searchText.toLowerCase().includes(query.trim().toLowerCase()));
   useEffect(() => {
@@ -58,8 +59,8 @@ export function BlogShell({ view = "home", slug }: { view?: View; slug?: string 
       <div className="nav-tools"><button className="icon-button" aria-label="搜索笔记" onClick={() => setSearchOpen(true)}><Icon /></button><button className="icon-button" aria-label={dark ? "切换浅色模式" : "切换深色模式"} onClick={toggleTheme}><Icon kind={dark ? "sun" : "moon"} /></button><a className="nav-contact" href={`mailto:${site.email}`}>联系我 ↗</a><button className="icon-button menu-button" aria-label="切换导航菜单" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><Icon kind={menuOpen ? "close" : "menu"} /></button></div>
     </div></header>
     <main id="main">{view === "home" ? <Home /> : <div className="page-container">
-      <div className="page-heading"><Link href="/" className="back-link">← 返回首页</Link><p className="eyebrow">{view === "post" ? "PROJECT NOTES" : "PERSONAL KNOWLEDGE"}</p><h1>{view === "post" ? current?.title || "文章未找到" : labels[view]}</h1></div>
-      {view === "post" ? current ? <Article post={current} /> : <div className="empty">这篇文章暂时找不到。<Link href="/archives/">浏览全部笔记 →</Link></div>
+      <div className="page-heading"><Link href={view === "experience" ? "/#experience" : "/"} className="back-link">{view === "experience" ? "← 返回实习经历" : "← 返回首页"}</Link><p className="eyebrow">{view === "experience" ? "EXPERIENCE / 实习经历" : view === "post" ? "PROJECT NOTES" : "PERSONAL KNOWLEDGE"}</p><h1>{view === "post" ? current?.title || "文章未找到" : view === "experience" ? currentExperience?.title : labels[view]}</h1></div>
+      {view === "experience" && currentExperience ? <ExperienceArticle detail={currentExperience} /> : view === "post" ? current ? <Article post={current} /> : <div className="empty">这篇文章暂时找不到。<Link href="/archives/">浏览全部笔记 →</Link></div>
       : view === "about" ? <div className="about-layout"><div className="markdown-body about-body" dangerouslySetInnerHTML={{ __html: aboutPage.html }} /><div className="about-contact"><div className="monogram">WT</div><h2>{site.name}</h2><p>{site.role}</p><a href={site.github} target="_blank" rel="noreferrer">GitHub ↗</a><a href={`mailto:${site.email}`}>{site.email}</a></div></div>
       : <><div className="collection-nav"><Link aria-current={view === "archives" ? "page" : undefined} href="/archives/">全部笔记</Link><Link aria-current={view === "categories" ? "page" : undefined} href="/categories/">按分类</Link><Link aria-current={view === "tags" ? "page" : undefined} href="/tags/">按标签</Link></div>
         {(view === "categories" || view === "tags") && <div className="filter-tags">{Array.from(new Set(posts.flatMap(p => view === "tags" ? p.tags : p.categories))).map(name => <a className={filter === name ? "selected" : ""} href={`/${view}/?name=${encodeURIComponent(name)}`} key={name}>{name}</a>)}</div>}
@@ -114,7 +115,7 @@ function Home() {
     <section id="projects" className="section-wrap content-section"><SectionTitle kicker="SELECTED WORK" title="精选项目。把想法变成现实。" subtitle="智能体工程与优化研究，是我目前投入最多的两个方向。" />
       <div className="project-grid">{site.projects.map(project => <article className="project-card" key={project.id}><Link href={project.href} className={`project-visual ${project.visual}`} aria-label={`查看${project.title}`}><span className="visual-index">PROJECT / {project.number}</span>{project.visual === "agent" ? <div className="runtime-diagram"><div className="diagram-input">User request</div><div className="diagram-flow">↓</div><div className="diagram-model">✳ Agent Runtime</div><div className="diagram-branches"><span>Model</span><i>⇄</i><span>Tools</span></div><div className="trace-line">● Trace　 ● Sessions　 ● Safety</div></div> : <div className="route-diagram"><svg viewBox="0 0 400 170" aria-hidden="true"><path d="M30 120 100 100 175 125 255 65 370 100" className="vehicle-path" /><path d="M100 100 150 30 255 65M175 125 290 155 370 100" className="uav-path" />{[[30,120],[100,100],[175,125],[255,65],[370,100],[150,30],[290,155]].map(([x,y],i)=><circle key={i} cx={x} cy={y} r={i>4 ? 6 : 8} />)}<text x="22" y="153">DEPOT</text><text x="138" y="16">UAV 01</text><text x="280" y="140">UAV 02</text></svg><div className="route-legend"><span>━ 车辆路径</span><span>┄ 无人机任务</span><span>◉ 补能与同步</span></div></div>}<span className="visual-arrow">↗</span></Link><div className="project-content"><p className="eyebrow">{project.category}<span>{project.period}</span></p><h3><Link href={project.href}>{project.title}</Link></h3><p className="project-subtitle">{project.subtitle}</p><p className="project-description">{project.description}</p><div className="tech-tags">{project.tags.map(tag => <span key={tag}>{tag}</span>)}</div><div className="project-links"><Link href={project.href}>查看项目记录 →</Link>{project.github && <a href={project.github} target="_blank" rel="noreferrer">源代码 ↗</a>}</div></div></article>)}</div>
     </section>
-    <section id="experience" className="experience-section"><div className="section-wrap experience-layout"><div className="experience-intro"><p className="eyebrow">EXPERIENCE</p><h2>走进业务，<br />完成交付。</h2><p>从金融知识检索到销售智能助手，在真实场景中连接模型、数据与工程。</p><Link className="text-link" href="/about/">更多关于我 ↗</Link></div><div className="timeline">{site.experience.map(job => <article className="experience-item" key={job.company}><div className="timeline-dot" /><p className="experience-period">{job.period}</p><h3>{job.company}</h3><p className="job-role">{job.role} <span> / {job.domain}</span></p><ul>{job.points.map(point => <li key={point}>{point}</li>)}</ul><div className="tech-tags">{job.tags.map(tag => <span key={tag}>{tag}</span>)}</div></article>)}</div></div></section>
+    <section id="experience" className="experience-section"><div className="section-wrap experience-layout"><div className="experience-intro"><p className="eyebrow">EXPERIENCE</p><h2>走进业务，<br />完成交付。</h2><p>从金融智能问答到销售运营平台，在真实场景中连接模型、数据与工程。</p><Link className="text-link" href="/about/">更多关于我 ↗</Link></div><div className="timeline">{site.experience.map(job => <Link className="experience-item" href={`/experience/${job.slug}/`} key={job.company} aria-label={`查看${job.company}实习详情`}><div className="timeline-dot" /><p className="experience-period">{job.period}</p><h3>{job.company}</h3><p className="job-role">{job.role} <span> / {job.domain}</span></p><ul>{job.points.map(point => <li key={point}>{point}</li>)}</ul><div className="tech-tags">{job.tags.map(tag => <span key={tag}>{tag}</span>)}</div><div className="experience-link"><span>查看实习详情</span><Icon kind="arrow" /></div></Link>)}</div></div></section>
     <section className="section-wrap content-section"><SectionTitle kicker="BACKGROUND & TOOLKIT" title="积累，让探索走得更远。" /><div className="background-grid"><div className="education-list">{site.education.map(edu => <article key={edu.school}><span className="education-icon">↗</span><div><p>{edu.period}</p><h3>{edu.school}<span>{edu.degree}</span></h3><small>{edu.detail}</small></div></article>)}</div><div className="skill-list">{site.skills.map((skill,i) => <div key={skill.title}><span>0{i+1}</span><div><h3>{skill.title}</h3><p>{skill.items}</p></div></div>)}</div></div></section>
     <section className="notes-section section-wrap content-section"><SectionTitle kicker="FIELD NOTES" title="每一次实践，都值得记录。" subtitle="关于智能体、工程与优化的项目笔记。" link="/archives/" /><div className="journal-layout"><NoteList items={posts.slice(0,3)} /><ProfileCard /></div></section>
     <section className="contact-section section-wrap"><div><p className="eyebrow">LET’S CONNECT</p><h2>聊聊 AI、工程，<br />或下一个有意思的问题。</h2><p>欢迎交流项目实践、研究想法与工作机会。</p></div><a className="contact-link" href={`mailto:${site.email}`}><span>{site.email}</span><span>↗</span></a></section>
@@ -131,6 +132,17 @@ function NoteList({ items }: { items: BlogPost[] }) {
     <div className={`note-cover ${post.categories.includes("优化研究") ? "cover-optimization" : "cover-agent"}`} aria-hidden="true"><span>{String(i+1).padStart(2,"0")}</span><div className="cover-glyph">{post.categories.includes("优化研究") ? <svg viewBox="0 0 160 130"><path d="m20 88 38-53 34 60 47-67M20 88l72 7 47-67M58 35l81-7" />{[[20,88],[58,35],[92,95],[139,28]].map(([x,y])=><circle key={x} cx={x} cy={y} r="7" />)}</svg> : <svg viewBox="0 0 160 130"><rect x="52" y="36" width="56" height="56" rx="17" /><path d="M66 56 56 64l10 8m28-16 10 8-10 8M85 52 75 78M80 14v22m0 56v24M28 64h24m56 0h24" /><circle cx="80" cy="12" r="4" /><circle cx="80" cy="119" r="4" /><circle cx="24" cy="64" r="4" /><circle cx="136" cy="64" r="4" /></svg>}</div><small>{post.categories.includes("优化研究") ? "OPTIMIZATION" : "AGENT ENGINEERING"}</small></div>
     <div className="note-content"><p className="note-meta">{post.category}<span>{post.date} · {post.read}</span></p><h3>{post.title}</h3><p className="note-excerpt">{post.excerpt}</p><span className="note-read">阅读笔记 <span>↗</span></span></div>
   </Link>)}{!items.length && <p className="empty">这个主题下还没有笔记。</p>}</div>;
+}
+function ExperienceArticle({ detail }: { detail: ExperienceDetail }) {
+  const job = site.experience.find(item => item.slug === detail.slug);
+  return <div className="experience-detail-layout">
+    <article className="experience-detail-body">
+      <div className="experience-detail-summary"><p className="eyebrow">{job?.period}</p><h2>{job?.role}</h2><p>{job?.domain}</p><div className="tech-tags">{job?.tags.map(tag => <span key={tag}>{tag}</span>)}</div></div>
+      <div className="markdown-body star-content" dangerouslySetInnerHTML={{ __html: detail.html }} />
+      <div className="experience-detail-footer"><Link className="text-link" href="/#experience">← 查看全部实习经历</Link><a className="text-link" href={`mailto:${site.email}`}>联系我 ↗</a></div>
+    </article>
+    <aside className="article-toc experience-outline"><p className="eyebrow">EXPERIENCE NOTES</p><h2>这段经历</h2><p className="experience-outline-description">{detail.excerpt}</p><nav aria-label="实习详情目录">{detail.toc.filter(item => item.level === 2).map(item => <a href={`#${item.id}`} key={item.id}>{item.title}</a>)}</nav><Link href="/about/" className="experience-about">更多关于我 ↗</Link></aside>
+  </div>;
 }
 function Article({ post }: { post: BlogPost }) {
   const body = useRef<HTMLDivElement>(null);

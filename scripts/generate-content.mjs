@@ -137,16 +137,27 @@ const aboutSource = await readFile(aboutPath, "utf8");
 const aboutParsed = parseSource(aboutSource);
 const aboutRendered = renderMarkdown(aboutParsed.content);
 
+const experiencesRoot = path.join(projectRoot, "content", "experiences");
+const experiences = [];
+for (const file of (await readdir(experiencesRoot)).filter(name => name.endsWith(".md")).sort()) {
+  const parsed = parseSource(await readFile(path.join(experiencesRoot, file), "utf8"));
+  const slug = path.basename(file, ".md");
+  const rendered = renderMarkdown(parsed.content);
+  experiences.push({ slug, title: String(parsed.data.title), excerpt: String(parsed.data.description), ...rendered });
+}
+
 const output = `// 此文件由 scripts/generate-content.mjs 自动生成，请勿手工修改。\n` +
   `export type BlogPost = { slug: string; title: string; date: string; category: string; categories: string[]; tags: string[]; image: string; excerpt: string; read: string; wordCount: number; searchText: string; html: string; toc: { id: string; level: number; title: string }[] };\n` +
   `export const posts: BlogPost[] = ${JSON.stringify(posts, null, 2)};\n` +
-  `export const aboutPage = ${JSON.stringify({ html: aboutRendered.html, toc: aboutRendered.toc }, null, 2)};\n`;
+  `export const aboutPage = ${JSON.stringify({ html: aboutRendered.html, toc: aboutRendered.toc }, null, 2)};\n` +
+  `export type ExperienceDetail = { slug: string; title: string; excerpt: string; html: string; toc: { id: string; level: number; title: string }[] };\n` +
+  `export const experiences: ExperienceDetail[] = ${JSON.stringify(experiences, null, 2)};\n`;
 
 await writeFile(outputPath, output, "utf8");
 console.log(`Generated ${posts.length} posts → ${path.relative(projectRoot, outputPath)}`);
 
 const baseUrl = "https://honesty0119.github.io";
-const routes = ["/", "/about/", "/archives/", "/categories/", "/tags/", ...posts.map(post => `/post/${post.slug}/`)];
+const routes = ["/", "/about/", "/archives/", "/categories/", "/tags/", ...posts.map(post => `/post/${post.slug}/`), ...experiences.map(item => `/experience/${item.slug}/`)];
 const escapeXml = value => value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll('"', "&quot;");
 await writeFile(path.join(projectRoot, "public", "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${routes.map(route => `<url><loc>${escapeXml(baseUrl + route)}</loc></url>`).join("")}</urlset>`, "utf8");
 await writeFile(path.join(projectRoot, "public", "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${baseUrl}/sitemap.xml\n`, "utf8");
