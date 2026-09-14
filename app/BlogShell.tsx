@@ -83,10 +83,34 @@ function Home() {
   return <>
     <section className="hero">
       <div className="hero-backdrop" aria-hidden="true"><picture><img className="hero-photo" src="/images/alpine-dawn.webp" alt="" fetchPriority="high" /></picture><div className="hero-shade" /></div>
-      <div className="hero-copy section-wrap"><p className="eyebrow"><span className="status-dot" /> HELLO, I’M TINGYING</p><h1>你好，我是<span>{site.name}<i>。</i></span></h1><p className="hero-role">{site.role}</p><p className="hero-description">厦门大学控制工程硕士在读。<br />关注大模型如何接入真实业务，也研究复杂调度问题如何得到更好的解。</p><div className="hero-actions"><a className="button primary" href="#projects">探索我的项目 <span>↗</span></a><a className="button secondary" href={site.github} target="_blank" rel="noreferrer">访问 GitHub <span>↗</span></a></div></div>
-      <div className="hero-bottom section-wrap"><span>用工程连接想法，用研究探索可能。</span><a href="#projects" className="scroll-cue" aria-label="向下探索项目"><Icon kind="down" /></a><span>XIAMEN · CHINA</span></div>
+      <div className="hero-layout section-wrap">
+        <div className="hero-copy">
+          <p className="eyebrow">AI ENGINEERING × OPTIMIZATION</p>
+          <h1>构建 AI 应用，<span>求解复杂决策。</span></h1>
+          <p className="hero-description">从 Agent 工具调用到车机协同调度，<br />用代码连接模型、数据与真实问题。</p>
+          <p className="hero-credential"><span className="status-dot" /> 厦门大学 · 控制工程硕士在读<span className="credential-divider" />2027 届</p>
+          <div className="hero-actions"><a className="button primary" href="#projects">查看精选项目 <span>↗</span></a><a className="button secondary" href="#experience">了解实习经历 <span>↓</span></a></div>
+          <a className="hero-source" href={site.github} target="_blank" rel="noreferrer">在 GitHub 查看我的代码 <Icon kind="arrow" /></a>
+        </div>
+        <div className="hero-work" aria-label="代表项目预览">
+          <div className="hero-work-heading"><span>SELECTED WORK</span><span>工程 / 研究</span></div>
+          <Link href={site.projects[0].href} className="spotlight-card spotlight-agent">
+            <div className="spotlight-meta"><span>01 / AGENT ENGINEERING</span><span className="spotlight-type">独立开发</span></div>
+            <h2>Minimal Agent Runtime</h2>
+            <p>模型之外，把执行过程做扎实。</p>
+            <div className="spotlight-flow" aria-hidden="true"><span><small>01</small>模型决策</span><i>→</i><span><small>02</small>工具执行</span><i>→</i><span><small>03</small>结果回填</span></div>
+            <div className="spotlight-bottom"><span>流式响应 · 会话隔离 · Trace 追踪</span><span className="spotlight-arrow"><Icon kind="arrow" /></span></div>
+          </Link>
+          <Link href={site.projects[1].href} className="spotlight-card spotlight-research">
+            <div className="spotlight-meta"><span>02 / OPTIMIZATION</span><span className="spotlight-type">研究项目</span></div>
+            <div className="spotlight-research-body"><div><h2>车机协同巡检与能源调度</h2><p>MILP 建模 · 能源感知启发式</p></div><svg className="spotlight-route" viewBox="0 0 100 70" fill="none" aria-hidden="true"><path d="M8 53 35 43 63 53 91 27" /><path d="m35 43 12-31 44 15" strokeDasharray="3 4" />{[[8,53],[35,43],[63,53],[91,27],[47,12]].map(([x,y]) => <circle key={x} cx={x} cy={y} r="3" />)}</svg></div>
+            <div className="spotlight-bottom"><span>联合考虑路径、时序与补能约束</span><span className="spotlight-arrow"><Icon kind="arrow" /></span></div>
+          </Link>
+        </div>
+      </div>
+      <div className="hero-bottom section-wrap"><span>模型应用 / 系统实现 / 优化建模</span><a href="#projects" className="scroll-cue">继续探索 <Icon kind="down" /></a></div>
     </section>
-    <div className="intro-dock section-wrap"><Link href="/about/" className="dock-identity"><span className="monogram">WT</span><div><strong>{site.name}</strong><small>保持好奇，持续构建。</small></div></Link><div className="dock-item"><small>教育背景</small><strong>厦门大学 <span>· 硕士在读</span></strong></div><div className="dock-item"><small>工程实践</small><strong>大模型应用 <span>与 Agent</span></strong></div><div className="dock-item"><small>研究方向</small><strong>组合优化 <span>与机器学习</span></strong></div><Link href="/about/" className="dock-more" aria-label="了解更多关于吴廷颖"><Icon kind="arrow" /></Link></div>
+    <div className="intro-dock section-wrap"><Link href="/about/" className="dock-identity"><span className="monogram">WT</span><div><strong>{site.name}</strong><small>2027 年 6 月预计毕业</small></div></Link><div className="dock-item"><small>近期实习</small><strong>AI Coding / FDE <span>· 圈巨网络</span></strong></div><div className="dock-item"><small>业务实践</small><strong>RAG / Text2SQL <span>· 智能问答</span></strong></div><div className="dock-item"><small>研究方向</small><strong>组合优化 <span>与机器学习</span></strong></div><Link href="/about/" className="dock-more" aria-label="了解更多关于吴廷颖"><Icon kind="arrow" /></Link></div>
     <section id="projects" className="section-wrap content-section"><SectionTitle kicker="SELECTED WORK" title="精选项目。把想法变成现实。" subtitle="智能体工程与优化研究，是我目前投入最多的两个方向。" />
       <div className="project-grid">{site.projects.map(project => <article className="project-card" key={project.id}><Link href={project.href} className={`project-visual ${project.visual}`} aria-label={`查看${project.title}`}><span className="visual-index">PROJECT / {project.number}</span>{project.visual === "agent" ? <div className="runtime-diagram"><div className="diagram-input">User request</div><div className="diagram-flow">↓</div><div className="diagram-model">✳ Agent Runtime</div><div className="diagram-branches"><span>Model</span><i>⇄</i><span>Tools</span></div><div className="trace-line">● Trace　 ● Sessions　 ● Safety</div></div> : <div className="route-diagram"><svg viewBox="0 0 400 170" aria-hidden="true"><path d="M30 120 100 100 175 125 255 65 370 100" className="vehicle-path" /><path d="M100 100 150 30 255 65M175 125 290 155 370 100" className="uav-path" />{[[30,120],[100,100],[175,125],[255,65],[370,100],[150,30],[290,155]].map(([x,y],i)=><circle key={i} cx={x} cy={y} r={i>4 ? 6 : 8} />)}<text x="22" y="153">DEPOT</text><text x="138" y="16">UAV 01</text><text x="280" y="140">UAV 02</text></svg><div className="route-legend"><span>━ 车辆路径</span><span>┄ 无人机任务</span><span>◉ 补能与同步</span></div></div>}<span className="visual-arrow">↗</span></Link><div className="project-content"><p className="eyebrow">{project.category}<span>{project.period}</span></p><h3><Link href={project.href}>{project.title}</Link></h3><p className="project-subtitle">{project.subtitle}</p><p className="project-description">{project.description}</p><div className="tech-tags">{project.tags.map(tag => <span key={tag}>{tag}</span>)}</div><div className="project-links"><Link href={project.href}>查看项目记录 →</Link>{project.github && <a href={project.github} target="_blank" rel="noreferrer">源代码 ↗</a>}</div></div></article>)}</div>
     </section>
